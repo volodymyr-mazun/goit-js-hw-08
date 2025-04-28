@@ -68,13 +68,6 @@ const images = [
 const container = document.querySelector('.gallery');
 let instance;
 
-// СКАСУВАННЯ ДІЙ БРАУЗЕРА ЗА ЗАМОВЧУВАННЯМ
-container.addEventListener('click', (e) => {  
-    if (e.target.nodeName === 'IMG') {  
-        e.preventDefault();  
-    }  
-});
-
 
 // СТВОРЕННЯ РОЗМІТКИ В JAVA SCRIPT
 function imageTemplate(image) {
@@ -87,7 +80,7 @@ function imageTemplate(image) {
 };
 
 function imagesTemplate(images) {
-    return images.map(imageTemplate).join('\n');
+    return images.map(image => imageTemplate(image)).join('\n');
 };
 
 function renderImages() {
@@ -99,12 +92,13 @@ renderImages();
 
 // ДЕЛЕГУВАННЯ ПОДІЙ  
 container.addEventListener('click', (e) => {  
-    if (e.target === e.currentTarget) return;  
+    if (e.target.nodeName !== 'IMG') return;
+    e.preventDefault();  
 
-    const liElem = e.target.closest('li');  
-    if (!liElem) return;  
+    const imgElem = e.target.closest('img');  
+    if (!imgElem) return;  
 
-    const linkElem = liElem.querySelector('img').dataset.source;  
+    const linkElem = imgElem.dataset.source;  
     console.log(linkElem);  
 
     const image = images.find(item => item.original === linkElem);  
