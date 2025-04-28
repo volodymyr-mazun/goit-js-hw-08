@@ -64,20 +64,19 @@ const images = [
     },
 ];
 
-console.log('Container clicked');
 
 const container = document.querySelector('.gallery');
 let instance;
 
 // СКАСУВАННЯ ДІЙ БРАУЗЕРА ЗА ЗАМОВЧУВАННЯМ
-const preventLink = document.querySelector('.gallery-link');
-
-preventLink.addEventListener('click', (e) => {
-    e.preventDefault();
+container.addEventListener('click', (e) => {  
+    if (e.target.nodeName === 'IMG') {  
+        e.preventDefault();  
+    }  
 });
 
 
-// СТВОРЕННЯ РОЗМІТКИ В HTML
+// СТВОРЕННЯ РОЗМІТКИ В JAVA SCRIPT
 function imageTemplate(image) {
     return `    
             <li class="gallery-item">
@@ -98,42 +97,48 @@ function renderImages() {
 
 renderImages();
 
-//ДЕЛЕГУВАННЯ ПОДІЙ
-container.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) return;
+// ДЕЛЕГУВАННЯ ПОДІЙ  
+container.addEventListener('click', (e) => {  
+    if (e.target === e.currentTarget) return;  
 
-    const liElem = e.target.closest('.gallery-img');
-    if (!liElem) return;
+    const liElem = e.target.closest('li');  
+    if (!liElem) return;  
 
-    const linkElem = liElem.dataset.source;
-    const image = images.find(item => item.original === linkElem);
-console.log(liElem);
+    const linkElem = liElem.querySelector('img').dataset.source;  
+    console.log(linkElem);  
 
-        openModal(image);
-    });
+    const image = images.find(item => item.original === linkElem);  
+
+    openModal(image);  
+});  
 
 
 // МОДАЛЬНЕ ВІКНО
-// function openModal(image) {  
-//     instance = basicLightbox.create(`  
-//     <div class="modal">  
-//         <img class="modal-img" src="${image.original}" alt="${image.description}" />  
-//     </div>  
-//     `);  
+function openModal(image) {  
+    instance = basicLightbox.create(`  
+    <div class="modal">  
+        <img class="modal-img" src="${image.original}" alt="${image.description}" />  
+    </div>  
+    `, {  
+        onShow: (instance) => {  
+            document.addEventListener('keydown', handleCloseModal);  
+        },  
+        onClose: (instance) => {  
+            document.removeEventListener('keydown', handleCloseModal);  
+        }  
+    });  
 
-//     instance.show();  
-//     document.addEventListener('keydown', handleCloseModal);
-// };
+    instance.show();  
+}  
 
-// function closeModal() {
-//     if (instance) {
-//         instance.close();
-//         document.removeEventListener('keydown', handleCloseModal);
-//     }
-// };
+function closeModal() {  
+    if (instance) {  
+        instance.close();  
+    }  
+}  
 
-// function handleCloseModal(e) {
-//     if (e.code === 'Escape') {
-//         closeModal();
-//     }
-// };
+function handleCloseModal(e) {  
+    if (e.code === 'Escape') {  
+        closeModal();  
+    }  
+}  
